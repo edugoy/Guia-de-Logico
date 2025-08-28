@@ -1,4 +1,3 @@
-%SALTOS
 %base de conocimineto
 puntajes(hernan,[3,5,8,6,9]).
 puntajes(julio,[9,7,3,9,10,2]).
@@ -16,5 +15,14 @@ estaDescalificado(Competidor) :-
     length(ListaDeSaltos, CantidadDeSaltos),
     CantidadDeSaltos > 5.
     
-
 %3. Si un competidor clasifica a la final. Un competidor clasifica a la final si la suma de sus puntajes es mayor o igual a 28, o si tiene dos saltos de 8 o más puntos.
+calificaALaFinal(Competidor) :-
+    puntajes(Competidor, ListaDePuntajes),
+    (sum_list(ListaDePuntajes, PuntosTotales),
+    PuntosTotales >= 28;
+    dosSaltosBuenos(ListaDePuntajes)).
+
+dosSaltosBuenos(ListaDePuntajes) :-
+    findall(Salto, (member(Salto, ListaDePuntajes), Salto >= 8), SaltosBuenos),
+    length(SaltosBuenos, CantidadDeSaltosBuenos),
+    CantidadDeSaltosBuenos >= 2.
