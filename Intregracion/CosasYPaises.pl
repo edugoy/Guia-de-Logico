@@ -52,10 +52,28 @@ excelenteCompaniero(Participante1, Participante2) :-
 %a. todas las cosas posibles para buscar en ese nivel están vivas (las cosas vivas en el ejemplo son: árbol, perro y flor)
 %b. en alguno de los destinos posibles para el nivel se habla italiano.
 %c. la suma del capital de los participantes de ese nivel es mayor a 10000. Asegurar que el predicado sea inversible.
+viva(arbol).
+viva(perro).
+viva(flor).
 
+interesante(Nivel) :-
+    tarea(Nivel,_),
+    forall(tarea(Nivel, buscar(Objeto,_)), viva(Objeto)).
+
+interesante(Nivel) :-
+    tarea(Nivel, buscar(_, Ciudad)),
+    idioma(Ciudad, italiano).
+
+interesante(Nivel) :-
+    nivelActual(_, Nivel),
+    findall(Capital, (nivelActual(Persona, Nivel), capital(Persona, Capital)), Capitales),
+    sum_list(Capitales, CapitalTotal),
+    CapitalTotal > 10000.
 
 %4. complicado/1: un participante está complicado si: no habla ninguno de los idiomas de los destinos posibles para su nivel actual; está en un nivel distinto de básico y su capital es menor a 1500, o está en el nivel básico y su capital es menor a 500.
-
+complicado(Participante) :-
+    nivelActual(Participante, Nivel),
+    forall(idiomaUtil(Nivel, Idioma), not(habla(Participante, Idioma))).
 
 %5. homogeneo/1: un nivel es homogéneo si en todas las opciones la cosa a buscar es la misma. En el ejemplo, el nivel intermedio es homogéneo, porque en las dos opciones el objeto a buscar es un árbol. 
 %Asegurar que el predicado sea inversible. 
