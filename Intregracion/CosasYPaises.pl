@@ -91,7 +91,18 @@ complicado(Participante) :-
 %Ayuda: hay que saber de alguna forma si una lista tiene un único elemento, p.ej. la lista [3,3,3,3] tiene un único elemento (el 3) mientras que la lista [2,1,2,4] no. Tal vez convenga definir un predicado aparte para este problema.
 homogeneo(Nivel) :-
     tarea(Nivel, buscar(Objeto,_)),
-    findall(Objeto, tarea(Nivel, buscar(Objeto,_)), Objetos).
+    findall(Objeto, tarea(Nivel, buscar(Objeto,_)), Objetos),
+    Objetos \= [],
+    esElMismo(Objetos).
 
-
+esElMismo([_]).
+esElMismo([X, X | T]) :-
+    esElMismo([X | T]).
+    
 %6. poliglota/1: una persona es políglota si habla al menos tres idiomas. En general: es válido agregar los predicados necesarios para poder garantizar inversibilidad o auxiliares para resolver cada ítem, y usar en un ítem los predicados definidos para resolver ítems anteriores. 
+
+poliglota(Participante) :-
+    habla(Participante, Idioma),
+    findall(Idioma, habla(Participante, Idioma), Idiomas),
+    length(Idiomas, CantidadIdiomas),
+    CantidadIdiomas >= 3.
