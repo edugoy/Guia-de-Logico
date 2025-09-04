@@ -1,8 +1,17 @@
-%base de conocimiento
 %tipo de cañerias [codos, caños, canillas]
 %de los codos importa el color [Ej: codo rojo]
 %de los caños importa el color y la longitud [Ej: caño rojo de 3 metros]
 %de las canillas tipo (para abrir o cerrar) color y ancho [Ej: canilla triangular roja de 4cm de ancho]
+
+%base de conocimiento
+%Forma en la que se modelaria
+%   canierias(Color, tipo(Codo)).
+%   canierias(Color, tipo(Canio, Longitud)).
+%   canierias(Color, tipo(Canilla, Tipo, Ancho)).
+%Ejemplos del modelado
+canierias(rojo, tipo(codo)).
+canierias(rojo, tipo(canio, 3)).
+canierias(rojo, tipo(canilla, triangular, 4)).
 
 %1. Definir un predicado que relacione una cañería con su precio. Una cañería es una lista de piezas. Los precios son:
 %    a) codos: $5.
