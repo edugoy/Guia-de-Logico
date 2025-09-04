@@ -21,17 +21,17 @@ paisImportante(kamchatka).
 paisImportante(alemania).
 
 /*países limítrofes*/
-limitrofes([argentina,brasil]).
-limitrofes([bolivia,brasil]).
-limitrofes([bolivia,argentina]).
-limitrofes([argentina,chile]).
-limitrofes([espania,francia]).
-limitrofes([alemania,francia]).
-limitrofes([nepal,india]).
-limitrofes([china,india]).
-limitrofes([nepal,china]).
-limitrofes([afganistan,china]).
-limitrofes([iran,afganistan]).
+limitrofes(argentina,brasil).
+limitrofes(bolivia,brasil).
+limitrofes(bolivia,argentina).
+limitrofes(argentina,chile).
+limitrofes(espania,francia).
+limitrofes(alemania,francia).
+limitrofes(nepal,india).
+limitrofes(china,india).
+limitrofes(nepal,china).
+limitrofes(afganistan,china).
+limitrofes(iran,afganistan).
 
 /*distribución en el tablero */
 ocupa(argentina, azul, 4).
@@ -56,7 +56,7 @@ continente(asia).
 
 /*objetivos*/
 objetivo(rojo, ocuparContinente(asia)).
-objetivo(azul, ocuparPaises([argentina, bolivia, francia, inglaterra, china])).
+objetivo(azul, ocuparPaises([argentinabolivia, francia, inglaterra, china])).
 objetivo(verde, destruirJugador(rojo)).
 objetivo(negro, ocuparContinente(europa)).
 
@@ -78,24 +78,48 @@ ocupaContinente(Jugador, Continente) :-
     
 
 %4. leFaltaMucho/2: Relaciona a un jugador y un continente si al jugador le falta ocupar más de 2 países de dicho continente.
+leFaltaMucho(Jugador, Continente) :-
+    estaEnContinente(Jugador, Continente),
+    noOcupaPaisDe(Continente, Pais1, Jugador),
+    noOcupaPaisDe(Continente, Pais2, Jugador),
+    Pais1 \= Pais2.
 
+noOcupaPaisDe(Continente, Pais, Jugador) :-
+    paisContinente(Continente, Pais),
+    not(ocupa(Pais, Jugador, _)).
 
 %5. sonLimitrofes/2: Relaciona 2 países si son limítrofes.
+sonLimitrofes(Pais1, Pais2) :-
+    limitrofes(Pais1, Pais2).
 
+sonLimitrofes(Pais1, Pais2) :-
+    limitrofes(Pais2, Pais1).
 
 %6. esGroso/1: Un jugador es groso si cumple alguna de estas condiciones:
     %a) ocupa todos los países importantes,
     %b) ocupa más de 10 países
-    %c) o tiene más de 50 ejercitos.
+esGroso(Jugador) :-
+    forall(paisImportante(Pais), ocupa(Pais, Jugador, _)).
 
+esGroso(Jugador) :- 
+    findall(Pais, ocupa(Pais, Jugador, _), Paises),
+    length(Paises, CantidadPaises),
+    CantidadPaises > 10.
 
 %7. estaEnElHorno/1: un país está en el horno si todos sus países limítrofes están ocupados por el mismo jugador que no es el mismo que ocupa ese país.
-
+estaEnElHorno(Jugador) :-
+    ocupa(Pais, Jugador, _),
+    ocupa(_, OtroJugador, _),
+    Jugador \= OtroJugador,
+    forall(sonLimitrofes(Pais, Limitrofe), ocupa(Limitrofe, OtroJugador, _)).
 
 %8. esCaotico/1: un continente es caótico si hay más de tres jugadores en él.
-
+esCaotico(Continente) :-
+    estaEnContinente(Jugador, Continente),
+    estaEnContinente(OtroJugador, Continente),
+    Jugador \= OtroJugador.
 
 %9. capoCannoniere/1: es el jugador que tiene ocupado más países.
-
-
-%10. ganadooor/1: un jugador es ganador si logro su objetivo 
+capoCannoniere(Jugador) :-
+    cantidadPaises(Jugador, Cantidad1),
+    forall(cantidadPaises(OtroJugador, Cantidad2), Cantidad1 > Cantidad2).
