@@ -4,20 +4,36 @@
 %de las canillas tipo (para abrir o cerrar) color y ancho [Ej: canilla triangular roja de 4cm de ancho]
 
 %base de conocimiento
-%Forma en la que se modelaria
-%   canierias(Color, tipo(Codo)).
-%   canierias(Color, tipo(Canio, Longitud)).
-%   canierias(Color, tipo(Canilla, Tipo, Ancho)).
 %Ejemplos del modelado
-canierias(rojo, tipo(codo)).
-canierias(rojo, tipo(canio, 3)).
-canierias(rojo, tipo(canilla, triangular, 4)).
+pieza(codo, rojo).
+pieza(canio(3), rojo).
+pieza(canilla(triangular, 4), rojo).
 
 %1. Definir un predicado que relacione una cañería con su precio. Una cañería es una lista de piezas. Los precios son:
 %    a) codos: $5.
 %    b) caños: $3 el metro.
 %    c) canillas: las triangulares $20, del resto $12 hasta 5 cm de ancho, $15 si son de más de 5 cm.
+precioPieza(pieza(codo, _), 5).
 
+precioPieza(pieza(canio(Largo), _), Precio) :-
+    Precio is Largo * 3.
+
+precioPieza(pieza(canilla(triangular, _), _), 20).
+
+precioPieza(pieza(canilla(Forma, Ancho), _), 12) :-
+    Forma \= triangular,
+    Ancho =< 5.
+
+precioPieza(pieza(canilla(Forma, Ancho), _), 15) :-
+    Forma \= triangular,
+    Ancho > 5.
+
+precioCanieria([], 0).
+
+precioCanieria([Pieza | Resto], Total) :-
+    precioPieza(Pieza, PrecioPieza),
+    precioCanieria(Resto, PrecioResto),
+    Total is PrecioPieza + PrecioResto.
 
 %2. Definir el predicado puedoEnchufar/2, tal que puedoEnchufar(P1,P2) se verifique si puedo enchufar P1 a la izquierda de P2. Puedo enchufar dos piezas si son del mismo color, o si son de colores enchufables. Las piezas azules pueden enchufarse a la izquierda de las rojas, y las rojas pueden enchufarse a la izquierda de las negras. Las azules no se pueden enchufar a la izquierda de las negras, tiene que haber una roja en el medio. P.ej.
 %   a) sí puedo enchufar (codo rojo, caño negro de 3 m).
