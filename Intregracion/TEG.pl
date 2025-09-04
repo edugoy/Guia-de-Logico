@@ -122,4 +122,4 @@ esCaotico(Continente) :-
 %9. capoCannoniere/1: es el jugador que tiene ocupado más países.
 capoCannoniere(Jugador) :-
     cantidadPaises(Jugador, Cantidad1),
-    forall(cantidadPaises(OtroJugador, Cantidad2), Cantidad1 > Cantidad2).
+    not((cantidadPaises(OtroJugador, Cantidad2), Cantidad1 > Cantidad2)).
