@@ -35,32 +35,70 @@ leGusta(eduardo, videojuegos).
 leDisgusta(eduardo, estudiar).
 
 
-perfiIncompleto(Persona) :-
+perfilIncompleto(Persona) :-
     persona(Persona, Edad, _),
     Edad < 18.
 
-perfiIncompleto(Persona) :-
+perfilIncompleto(Persona) :-
     persona(Persona, _, _),
     findall(Gusto, leGusta(Persona, Gusto), Gustos),
     length(Gustos, Cantidad),
     Cantidad < 5.
 
-perfiIncompleto(Persona) :-
+perfilIncompleto(Persona) :-
     persona(Persona, _, _),
     findall(Disguto, leDisgusta(Persona, Disgusto), Disgustos),
     length(Disgustos, Cantidad),
     Cantidad < 5.
 
-perfiIncompleto(Persona) :-
+perfilIncompleto(Persona) :-
     persona(Persona, _, _),
     not(leInteresa(Persona, _)).
 
-perfiIncompleto(Persona) :-
+perfilIncompleto(Persona) :-
     persona(Persona, _, _),
     not(rangoBuscado(Persona, _, _)).
 
 %Analisis
+almaLibre(Persona) :-
+    persona(Persona, _, _),
+    not(perfilIncompleto(Persona)),
+    forall(persona(_, _, Genero), leInteresa(Persona, Genero)).
+    
+almaLibre(Persona) :-
+    persona(Persona, _, _),
+    not(perfilIncompleto(Persona)),
+    rangoBuscado(Persona, Min, Max),
+    Rango is Max - Min,
+    Rango > 30.
+
+quiereLaHerencia(Persona) :-
+    persona(Persona, Edad, _),
+    not(perfilIncompleto(Persona)),
+    rangoBuscado(Persona, Min, _),
+    Min >= Edad + 30.
+
+indeseable(Persona) :-
+    persona(Persona, _, _),
+    not(pretendiente(_, Persona)).
 
 %Matches
+pretendiente(Persona1, Persona2) :-
+    persona(Persona1, _, _),
+    persona(Persona2, Edad2, Genero2),
+    leInteresa(Persona1, Genero2),
+    rangoBuscado(Persona1, Min1, Max1),
+    Edad2 >= Min1,
+    Edad2 =< Max1,
+    gustoEnComun(Persona1, Persona2),
+    Persona1 \= Persona2.
+
+gustoEnComun(Persona1, Persona2) :-
+    leGusta(Persona1, Gusto),
+    leGusta(Persona2, Gusto).
+
+hayMatch(Persona1, Persona2) :-
+    pretendiente(Persona1, Persona2),
+    pretendiente(Persona2, Persona1).
 
 %Mensajes
