@@ -101,4 +101,20 @@ hayMatch(Persona1, Persona2) :-
     pretendiente(Persona1, Persona2),
     pretendiente(Persona2, Persona1).
 
+trianguloAmoros(Persona1, Person2, Persona3) :-
+    hayMatch(Persona1, Person2),
+    hayMatch(Persona2, Persona3),
+    hayMatch(Persona3, Persona1).
+
+elUnoParaElOtro(Persona1, Persona2) :-
+    hayMatch(Persona1, Persona2),
+    not(meDisgusta(Persona1, Persona2)),
+    not(meDisgusta(Persona2, Persona1)).
+
+meDisgusta(Persona1, Persona2) :-
+    persona(Persona1, _, _),
+    persona(Persona2, _, _),
+    leGusta(Persona1, Cosa),
+    leDisgusta(Persona2, Cosa).
+
 %Mensajes
