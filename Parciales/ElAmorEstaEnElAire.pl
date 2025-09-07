@@ -34,6 +34,7 @@ rangoBuscado(jesus, 18, 80).
 leGusta(eduardo, videojuegos).
 leDisgusta(eduardo, estudiar).
 
+indiceDeAmor(Emisor, Receptor, Valor).
 
 perfilIncompleto(Persona) :-
     persona(Persona, Edad, _),
@@ -112,9 +113,24 @@ elUnoParaElOtro(Persona1, Persona2) :-
     not(meDisgusta(Persona2, Persona1)).
 
 meDisgusta(Persona1, Persona2) :-
-    persona(Persona1, _, _),
-    persona(Persona2, _, _),
-    leGusta(Persona1, Cosa),
-    leDisgusta(Persona2, Cosa).
+    forall(leGusta(Persona1, Gusto), not(leDisgusta(Person2, Gusto))).
 
 %Mensajes
+desbalance(Persona1, Persona2) :-
+    indiceDeAmorPromedio(Persona1, Persona2, Indice1),
+    indiceDeAmorPromedio(Persona2, Persona1, Indice2),
+    masDelDoble(Indice1, Indice2).
+
+indiceDeAmorPromedio(Persona, OtraPersona, Indice) :-
+    findall(Mensaje, indiceDeAmor(Persona, OtraPersona, Mensaje), Mensajes),
+    length(Mensajes, Cantidad),
+    sum_list(Mensajes, Suma),
+    Indice is Cantidad / Suma.
+    
+masDelDoble(Indice, OtroIndice) :-
+    Doble is Indice * 2,
+    Doble < OtroIndice.
+
+ghostea(Persona1, Persona2) :-
+    indiceDeAmor(Persona1, Persona2, _),
+    not(indiceDeAmor(Persona2, Persona1, _)).
