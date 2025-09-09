@@ -1,5 +1,5 @@
 %1) modelado
-puestoDeComida(hamburguesas, 2000).
+puestoDeComida(hamburguesa, 2000).
 puestoDeComida(panchitoConPapas, 1500).
 puestoDeComida(lomitoCompleto, 2500).
 puestoDeComida(caramelos, 0).
@@ -23,6 +23,9 @@ estadoVisitante(martina, 60, 50).
 esChico(Visitante) :-
     visitante(Visitante, _, Edad),
     Edad < 13.
+esAdulto(Visitante) :-
+    visitante(Visitante, _, Edad),
+    Edad >= 13.
 
 %atracciones(Nombre, Categoria).
 atracciones(autitosChocadores, tranquila(todos)).
@@ -70,3 +73,51 @@ estaEntre(Parametro, Numero1, Numero2) :-
     Parametro =< Numero2.
 vieneSolo(Visitante) :-
     not(grupoFamiliar(Visitante, _)).
+%3)
+puedeSatisfacerHambre(Familia, Comida) :-
+    grupoFamiliar(_, Familia),
+    forall(grupoFamiliar(Integrante, Familia), (satisfaceIntegrante(Integrante, Comida), tieneDineroSuficiente(Integrante, Comida))).
+    
+satisfaceIntegrante(Visitante, hamburguesa) :-
+    visitante(Visitante, _, _),
+    estadoVisitante(Visitante, Hambre, _),
+    Hambre < 50.
+satisfaceIntegrante(Visitante, panchitoConPapas) :-
+    esChico(Visitante).
+satisfaceIntegrante(Visitante, caramelos) :-
+    visitante(Visitante, _, _),
+    forall(comidaPaga(Comida), not(tieneDineroSuficiente(Visitante, Comida))).
+satisfaceIntegrante(Visitante, lomitoCompleto).
+
+comidaPaga(hamburguesa).
+comidaPaga(panchitoConPapas).
+comidaPaga(lomitoCompleto).
+
+tieneDineroSuficiente(Visitante, Comida) :-
+    visitante(Visitante, Dinero, _),
+    puestoDeComida(Comida, Precio),
+    Dinero >= Precio.
+%4)
+lluviaDeHamburguesas(Visitante, Atraccion) :-
+    visitante(Visitante, _, _),
+    tieneDineroSuficiente(Visitante, hamburguesa),
+    atracciones(Atraccion, intensa(Coeficiente)),
+    Coeficiente > 10.
+lluviaDeHamburguesas(Visitante, Atraccion) :-
+    visitante(Visitante, _, _),
+    tieneDineroSuficiente(Visitante, hamburguesa),
+    esMontaniaRusaPeligrosa(Visitante, Atraccion).
+lluviaDeHamburguesas(Visitante, tobogan) :-
+    visitante(Visitante, _, _),
+    tieneDineroSuficiente(Visitante, hamburguesa).
+
+esMontaniaRusaPeligrosa(Visitante, Atraccion) :-
+    esAdulto(Visitante),
+    not(estadoDeBienestar(necesitaEntretenerse, Visitante)),
+    atracciones(Atraccion, montaniaRusa(Giros, _)),
+    forall(atracciones(OtrAtraccion, montaniaRusa(OtrosGiros, _)), OtrosGiros =< Giros).
+esMontaniaRusaPeligrosa(Visitante, Atraccion) :-
+    esChico(Visitante),
+    atracciones(Atraccion, montaniaRusa(_, Duracion)),
+    Duracion > 60. 
+%5)
