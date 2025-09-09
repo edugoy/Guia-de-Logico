@@ -21,11 +21,11 @@ stud(baratucci, elCharabon).
 stud(leguisamon, elCharabon).
 
 %gano(Caballo, Premio).
-gano(botafogo, granPremioNacionl).
-gano(botafogo, granPremioRepublica).
-gano(oldMan, granPremioRepublica).
-gano(oldMan, campeonatoDeOro).
-gano(matBoy, granPremioCriadores).
+ganoPremioImportante(botafogo, granPremioNacional).
+ganoPremioImportante(botafogo, granPremioRepublica).
+ganoPremioImportante(oldMan, granPremioRepublica).
+ganoPremioComun(oldMan, campeonatoDeOro).
+ganoPremioComun(matBoy, granPremioCriadores).
 
 %preferencia de caballo
 %prefiere(caballo, condicion).
@@ -55,3 +55,41 @@ aborrece(Caballo, Stud) :-
     caballo(Caballo),
     stud(_, Stud),
     forall(stud(Jockey, Stud), not(prefiere(Caballo, Jockey))).
+%pto 4
+piolin(Jockey) :-
+    jockey(Jockey, _, _),
+    ganoPremioImportante(_, _),
+    forall(ganoPremioImportante(Caballo, _), prefiere(Caballo, Jockey)).
+%pto 5
+resultado([botafogo, oldMan, energica]).
+primerosDos(resultado([Primero, Segundo | _]), Primero, Segundo).
+
+gana(ganador(Caballo), Carrera) :-
+    primerosDos(Carrera, Caballo, _).
+
+gana(segundo(Caballo), Carrera) :-
+    primerosDos(Carrera, Caballo, _).
+gana(segundo(Caballo), Carrera) :-
+    primerosDos(Carrera, _, Caballo).
+
+gana(exacta(Caballo1, Caballo2), Carrera) :-
+    primerosDos(Carrera, Caballo1, Caballo2).
+
+gana(imperfecta(Caballo1, Caballo2), Carrera) :-
+    primerosDos(Carrera, Caballo1, Caballo2).
+gana(imperfecta(Caballo1, Caballo2), Carrera) :-
+    primerosDos(Carrera, Caballo2, Caballo1).
+
+%pto 6
+colorCrin(botafogo, negro).
+colorCrin(oldMan, marron).
+colorCrin(energica, gris).
+colorCrin(energica, negro).
+colorCrin(matBoy, marron).
+colorCrin(matBoy, blanco).
+colorCrin(yatasto, blanco).
+colorCrin(yatasto, marron).
+
+puedeComprar(Color, CualesPuedeComprar) :-
+    colorCrin(_, Color),
+    findall(Caballo, colorCrin(Caballo, Color), CualesPuedeComprar).
